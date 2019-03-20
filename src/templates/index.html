@@ -2,26 +2,14 @@
 {% load staticfiles %}
 {% block main %}
     <div class="container-fluid text-center py-5">
-        <div class="heading3 pb-3">Quiz Portal</div>
-        {% for quizzes in quiz %}
-            {% for question in quizzes.questions.all %}
-                <h4>Q.{{ forloop.counter }}</h4>
-                {{ question.question|safe }}
-                <h4>Possible Answers</h4>
+        <div class="heading3 pb-3">Welcome to Quiz Portal</div>
+        <div class="heading5 pb-3">A portal to take you to another world of quizzery</div>
+        <a href="{% url 'quiz:index' %}">
+            <button type="button" class="btn btn-rounded waves-effect button-fs"
+                    style="background-color: var(--btn-bg-color);">
+                Enter Here
+            </button>
+        </a>
 
-                {% for answer in question.answers.all %}
-                    {{ answer.name }}<br>
-                {% endfor %}
-                <br>
-            {% endfor %}
-        {% endfor %}
-        <div class="btn-group my-5" role="group" aria-label="Buttons">
-            <a href="">
-                <button type="button" class="btn btn-rounded waves-effect button-fs"
-                        style="background-color: var(--btn-bg-color);">
-                    Submit
-                </button>
-            </a>
-        </div>
     </div>
 {% endblock %}
