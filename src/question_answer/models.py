@@ -1,7 +1,7 @@
 from django.db import models
 from versatileimagefield.fields import VersatileImageField
 from ckeditor_uploader.fields import RichTextUploadingField
-from quiz.models import QuizCategory
+from django.utils.text import slugify
 
 
 class Answer(models.Model):
@@ -15,7 +15,6 @@ class Question(models.Model):
     question = RichTextUploadingField(null=True, blank=True, default='')
     slug = models.SlugField(unique=True)
     image = VersatileImageField(upload_to='images', null=True, blank=True)
-    quiz_category = models.ForeignKey(QuizCategory, on_delete=models.CASCADE)
     answers = models.ManyToManyField('Answer', related_name='questions')
     order = models.IntegerField(default=0, blank=False)
     custom_html_upper = models.TextField(null=True, blank=True, default='')
@@ -29,5 +28,5 @@ class Question(models.Model):
         ordering = ['order']
 
     def save(self, *args, **kwargs):
-        self.slug = self.quiz_category.slug + str(self.order)
+        self.slug = slugify(self.question)
         super(Question, self).save(*args, **kwargs)

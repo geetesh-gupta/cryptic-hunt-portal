@@ -1,13 +1,15 @@
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils.text import slugify
+from question_answer.models import Question
 
 
-class QuizCategory(models.Model):
+class Quiz(models.Model):
     name = models.CharField(max_length=128)
     slug = models.SlugField()
     about = RichTextUploadingField(null=True, blank=True, default='')
     date_published = models.DateTimeField()
+    questions = models.ManyToManyField(Question, related_name='quiz')
     published = models.BooleanField(default=False)
 
     def __str__(self):
@@ -15,8 +17,8 @@ class QuizCategory(models.Model):
 
     class Meta:
         ordering = ['date_published']
-        verbose_name_plural = 'quiz categories'
+        verbose_name_plural = 'quizzes'
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super(QuizCategory, self).save(*args, **kwargs)
+        super(Quiz, self).save(*args, **kwargs)

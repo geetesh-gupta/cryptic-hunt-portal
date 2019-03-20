@@ -1,11 +1,13 @@
 from django.contrib import admin
-from .models import QuizCategory # Import QuizCategory module
+from .models import Quiz  # Import Quiz module
 
 
-# Register QuizCategory module on the admin interface
-@admin.register(QuizCategory)
-class QuizCategoryAdmin(admin.ModelAdmin):
+# Register Quiz module on the admin interface
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ['name', 'published']
+
     class Meta:
-        model = QuizCategory
-        # All fields of QuizCategory
+        model = Quiz
+        # All fields of Quiz
         fields = '__all__'

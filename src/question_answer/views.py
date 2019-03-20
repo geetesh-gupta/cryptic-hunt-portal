@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from question_answer.models import Question
+from quiz.models import Quiz
 
 
 class IndexView(TemplateView):
@@ -7,6 +7,6 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        question_list = Question.objects.filter(published=True)
-        context['question_list'] = question_list
+        quiz = Quiz.objects.filter(published=True)
+        context['quiz'] = quiz
         return context
