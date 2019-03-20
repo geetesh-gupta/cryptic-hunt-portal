@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block main %}
+    <div class="container-fluid text-center py-5">
+        <div class="heading3 pb-3">Select Quiz</div>
+        {% for quiz in quizzes %}
+            <a href="{{ quiz.slug }}">
+                <button type="button" class="btn btn-rounded waves-effect button-fs"
+                        style="background-color: var(--btn-bg-color);">
+                    {{ quiz.name }}
+                </button>
+            </a>
+            <br>
+        {% endfor %}
+    </div>
+{% endblock %}
