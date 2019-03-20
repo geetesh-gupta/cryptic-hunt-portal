@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'versatileimagefield',
     'question_answer',
-    'quiz'
+    'quiz',
+    'main'
 ]
 
 MIDDLEWARE = [
