@@ -26,7 +26,7 @@ class Question(models.Model):
         return self.question
 
     class Meta:
-        ordering = ['question']
+        ordering = ['order']
 
     def save(self, *args, **kwargs):
         self.slug = self.quiz_category.slug + str(self.order)
