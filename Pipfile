@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Django = "*"
+django-versatileimagefield = "*"
+social-auth-app-django = "*"
+flake8 = "*"
+psycopg2 = "*"
+django-decouple = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"
