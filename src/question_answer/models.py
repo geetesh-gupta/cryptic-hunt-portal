@@ -16,7 +16,6 @@ class Question(models.Model):
     slug = models.SlugField(unique=True)
     image = VersatileImageField(upload_to='images', null=True, blank=True)
     answers = models.ManyToManyField('Answer', related_name='questions')
-    order = models.IntegerField(default=0, blank=False)
     custom_html_upper = models.TextField(null=True, blank=True, default='')
     custom_html_lower = models.TextField(null=True, blank=True, default='')
     published = models.BooleanField(default=False)

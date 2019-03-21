@@ -9,7 +9,7 @@ class Quiz(models.Model):
     slug = models.SlugField()
     about = RichTextUploadingField(null=True, blank=True, default='')
     date_published = models.DateTimeField()
-    questions = models.ManyToManyField(Question, related_name='quiz')
+    questions = models.ManyToManyField(Question, related_name='quiz', through='QuestionOrder')
     published = models.BooleanField(default=False)
 
     def __str__(self):
