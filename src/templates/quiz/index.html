@@ -4,7 +4,7 @@
     <div class="container-fluid text-center py-5">
         <div class="heading3 pb-3">Select Quiz</div>
         {% for quiz in quizzes %}
-            <a href="{{ quiz.slug }}">
+            <a href="{{ quiz.slug }}/1/">
                 <button type="button" class="btn btn-rounded waves-effect button-fs"
                         style="background-color: var(--btn-bg-color);">
                     {{ quiz.name }}
