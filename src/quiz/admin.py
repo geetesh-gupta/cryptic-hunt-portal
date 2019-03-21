@@ -1,5 +1,11 @@
 from django.contrib import admin
 from .models import Quiz  # Import Quiz module
+from .models import QuestionOrder  # Import Quiz module
+
+
+class QuestionOrderInline(admin.TabularInline):
+    model = QuestionOrder
+    extra = 1
 
 
 # Register Quiz module on the admin interface
