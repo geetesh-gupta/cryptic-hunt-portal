@@ -22,3 +22,9 @@ class Quiz(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Quiz, self).save(*args, **kwargs)
+
+
+class QuestionOrder(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    order = models.IntegerField(default=1)
