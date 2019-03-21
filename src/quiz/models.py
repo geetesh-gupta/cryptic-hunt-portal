@@ -11,6 +11,7 @@ class Quiz(models.Model):
     date_published = models.DateTimeField()
     questions = models.ManyToManyField(Question, related_name='quiz', through='QuestionOrder')
     published = models.BooleanField(default=False)
+    current_question = models.IntegerField(default=1)
 
     def __str__(self):
         return self.name
