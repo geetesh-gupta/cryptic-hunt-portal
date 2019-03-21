@@ -12,3 +12,15 @@ class QuizAdmin(admin.ModelAdmin):
         model = Quiz
         # All fields of Quiz
         fields = '__all__'
+
+
+# Register Quiz module on the admin interface
+@admin.register(QuestionOrder)
+class QuestionOrderAdmin(admin.ModelAdmin):
+    # Display customised list on admin page
+    list_display = ['quiz', 'question', 'order']
+
+    class Meta:
+        model = QuestionOrder
+        # All fields of Quiz
+        fields = '__all__'
