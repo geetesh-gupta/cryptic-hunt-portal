@@ -26,7 +26,16 @@ class Question(models.Model):
 
     class Meta:
         ordering = ['order']
+    def _get_unique_slug(self):
+        slug = slugify(self.question)[0:48]
+        unique_slug = slug
+        num = 1
+        while Question.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.question)
-        super(Question, self).save(*args, **kwargs)
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
