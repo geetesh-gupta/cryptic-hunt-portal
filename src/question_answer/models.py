@@ -25,7 +25,8 @@ class Question(models.Model):
         return self.question[3:-4]
 
     class Meta:
-        ordering = ['order']
+        ordering = ['slug']
+
     def _get_unique_slug(self):
         slug = slugify(self.question)[0:48]
         unique_slug = slug
