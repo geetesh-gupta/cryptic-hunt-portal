@@ -15,15 +15,17 @@ class QuestionAdmin(admin.ModelAdmin):
         # All fields of Question
         fields = '__all__'
 
+    # list_display for questions
+    def Questions(self, obj):
+        question = (obj.question[3:47] + '...') if len(obj.question) > 50 else obj.question[3:-4]
+        return question
+
     # list_display for quizzes as comma-separated-list
     def Quizzes(self, obj):
         return ", ".join([
             quiz.name for quiz in obj.quiz.all()
         ])
 
-    # list_display for questions
-    def Questions(self, obj):
-        return obj.question[3:-4]
 
 
 # Register Answer module on the admin interface
