@@ -13,6 +13,7 @@ class QuestionOrderInline(admin.TabularInline):
 class QuizAdmin(admin.ModelAdmin):
     # Display customised list on admin page
     list_display = ['name', 'published']
+    inlines = (QuestionOrderInline,)
 
     class Meta:
         model = Quiz

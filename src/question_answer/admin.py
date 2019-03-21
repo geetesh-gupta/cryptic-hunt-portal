@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Question, Answer  # Import Question and Answer modules
+from quiz.admin import QuestionOrderInline
 
 
 # Register Question module on the admin interface
@@ -9,6 +10,8 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ['Questions', 'slug', 'Quizzes', 'Order']
     # Add filters on admin page
     list_filter = ['quiz__name']
+
+    inlines = (QuestionOrderInline,)
 
     class Meta:
         model = Question
