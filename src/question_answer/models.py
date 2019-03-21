@@ -22,7 +22,7 @@ class Question(models.Model):
     published = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.question
+        return self.question[3:-4]
 
     class Meta:
         ordering = ['order']
