@@ -12,7 +12,7 @@ class Answer(models.Model):
 
 
 class Question(models.Model):
-    question = RichTextUploadingField(null=True, blank=True, default='')
+    question = RichTextUploadingField(null=True, blank=False, default='')
     slug = models.SlugField(unique=True)
     image = VersatileImageField(upload_to='images', null=True, blank=True)
     answers = models.ManyToManyField('Answer', related_name='questions')
