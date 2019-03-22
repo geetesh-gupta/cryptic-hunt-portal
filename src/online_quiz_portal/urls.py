@@ -1,4 +1,5 @@
 from django.contrib import admin
+from social_django.models import Association, Nonce, UserSocialAuth
 from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
@@ -10,3 +11,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('auth/', include('social_django.urls', namespace='social')),
 ]
+
+admin.site.unregister(Association)
+admin.site.unregister(Nonce)
+admin.site.unregister(UserSocialAuth)
