@@ -42,7 +42,7 @@ class QuizView(AccessMixin, UpdateView):
         if (self.kwargs['num'] < num_of_que):
             form.instance.current_question = self.kwargs['num'] + 1
         else:
-            form.instance.current_question = 1
+            form.instance.current_question = 0
         return super().form_valid(form)
 
     def get_queryset(self):
@@ -65,8 +65,11 @@ class QuizView(AccessMixin, UpdateView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        cur_que_num = self.get_quiz(self.kwargs['slug']).current_question
-        if kwargs['num'] != cur_que_num:
+        quiz = self.get_quiz(self.kwargs['slug'])
+        cur_que_num = quiz.current_question
+        if cur_que_num == 0:
+            return render(request, 'quiz/result.html', {'message': 'You have already completed the quiz.'})
+        elif kwargs['num'] != cur_que_num:
             return redirect(reverse('quiz:quiz', kwargs={'slug': kwargs['slug'], 'num': cur_que_num}))
         else:
             return super(QuizView, self).dispatch(request, *args, **kwargs)
