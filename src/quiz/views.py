@@ -68,7 +68,7 @@ class QuizView(AccessMixin, UpdateView):
         quiz = self.get_quiz(self.kwargs['slug'])
         cur_que_num = quiz.current_question
         if cur_que_num == 0:
-            return render(request, 'quiz/result.html', {'message': 'You have already completed the quiz.'})
+            return redirect(reverse('quiz:result',kwargs={'slug': kwargs['slug']}))
         elif kwargs['num'] != cur_que_num:
             return redirect(reverse('quiz:quiz', kwargs={'slug': kwargs['slug'], 'num': cur_que_num}))
         else:
@@ -90,3 +90,13 @@ class ResultView(AccessMixin, DetailView):
     def get_queryset(self):
         quiz = Quiz.objects.filter(published=True, slug=self.kwargs['slug'])
         return quiz
+
+    def get_context_data(self, **kwargs):
+        quiz = Quiz.objects.filter(published=True, slug=self.kwargs['slug'])[0]
+        num_of_que = quiz.questions.count()
+        score = Score.objects.filter(user=self.request.user, quiz=quiz)[0].score
+        context = super(ResultView, self).get_context_data(**kwargs)
+        context['quiz'] = quiz
+        context['num_of_que'] = num_of_que
+        context['score'] = score
+        return context
