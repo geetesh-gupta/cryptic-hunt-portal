@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block main %}
+    <div class="container-fluid text-center py-5">
+        <div class="heading3 pb-3">Error 403 Forbidden</div>
+        <p>{{ error }}</p>
+        <a role="button" href='{{ redirect_url }}'>
+            <button type="button" class="btn btn-rounded waves-effect button-fs"
+                    style="background-color: var(--btn-bg-color);">
+                {{ label }}
+            </button>
+        </a>
+
+    </div>
+{% endblock %}

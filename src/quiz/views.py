@@ -2,7 +2,18 @@ from django.views.generic import ListView, UpdateView, DetailView
 from quiz.models import Quiz, QuestionOrder
 from .forms import AnswerForm
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class AccessMixin(LoginRequiredMixin):
+    template = 'error.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            return render(request, self.template, {'error': 'Admins are not allowed to fill the quiz. Contact admin.',
+                                                   'redirect_url': '/admin/', 'label': 'Go To Admin'})
+        return super().dispatch(request, *args, **kwargs)
 
 
 class IndexView(ListView):
@@ -11,7 +22,7 @@ class IndexView(ListView):
     context_object_name = 'quizzes'
 
 
-class QuizView(UpdateView):
+class QuizView(AccessMixin, UpdateView):
     template_name = 'quiz/quiz.html'
     context_object_name = 'quiz'
     form_class = AnswerForm
@@ -54,7 +65,7 @@ class QuizView(UpdateView):
         return Quiz.objects.filter(published=True, slug=slug)[0]
 
 
-class ResultView(DetailView):
+class ResultView(AccessMixin, DetailView):
     template_name = 'quiz/result.html'
     context_object_name = 'result'
 
