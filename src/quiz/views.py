@@ -1,5 +1,5 @@
 from django.views.generic import ListView, UpdateView, DetailView
-from quiz.models import Quiz, QuestionOrder
+from quiz.models import Quiz, QuestionOrder, Score
 from .forms import AnswerForm
 from django.urls import reverse
 from django.shortcuts import redirect, render
@@ -28,7 +28,17 @@ class QuizView(AccessMixin, UpdateView):
     form_class = AnswerForm
 
     def form_valid(self, form):
-        num_of_que = self.get_quiz(self.kwargs['slug']).questions.count()
+        quiz = self.get_quiz(self.kwargs['slug'])
+        score = self.check_score(quiz)
+        if score == 0:
+            score = Score(user=self.request.user, quiz=quiz, score=1)
+            score.save()
+        else:
+            score_model = Score.objects.filter(user=self.request.user, quiz=quiz)[0]
+            score_model.score = score + 1
+            score_model.save()
+
+        num_of_que = quiz.questions.count()
         if (self.kwargs['num'] < num_of_que):
             form.instance.current_question = self.kwargs['num'] + 1
         else:
@@ -63,6 +73,11 @@ class QuizView(AccessMixin, UpdateView):
 
     def get_quiz(self, slug):
         return Quiz.objects.filter(published=True, slug=slug)[0]
+
+    def check_score(self, quiz):
+        if quiz.score_set.filter(user=self.request.user).exists():
+            return quiz.score_set.filter(user=self.request.user).all()[0].score
+        return 0
 
 
 class ResultView(AccessMixin, DetailView):
