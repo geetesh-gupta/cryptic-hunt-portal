@@ -2,6 +2,7 @@ from django.views.generic import ListView, UpdateView, DetailView
 from quiz.models import Quiz, QuestionOrder
 from .forms import AnswerForm
 from django.urls import reverse
+from django.shortcuts import redirect
 
 
 class IndexView(ListView):
@@ -43,6 +44,12 @@ class QuizView(UpdateView):
         context['current_question'] = cur_que
         return context
 
+    def dispatch(self, request, *args, **kwargs):
+        cur_que_num = self.get_quiz(self.kwargs['slug']).current_question
+        if kwargs['num'] != cur_que_num:
+            return redirect(reverse('quiz:quiz', kwargs={'slug': kwargs['slug'], 'num': cur_que_num}))
+        else:
+            return super(QuizView, self).dispatch(request, *args, **kwargs)
 
 class ResultView(DetailView):
     template_name = 'quiz/result.html'
