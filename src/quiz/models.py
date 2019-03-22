@@ -2,6 +2,7 @@ from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils.text import slugify
 from question_answer.models import Question
+from django.contrib.auth.models import User
 
 
 class Quiz(models.Model):
@@ -29,3 +30,9 @@ class QuestionOrder(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     order = models.IntegerField(default=1)
+
+
+class Score(models.Model):
+    user = models.ForeignKey(User, limit_choices_to={'is_staff': False}, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
