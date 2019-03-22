@@ -1,4 +1,4 @@
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, DetailView
 from quiz.models import Quiz, QuestionOrder
 from .forms import AnswerForm
 from django.urls import reverse
@@ -11,13 +11,17 @@ class IndexView(ListView):
 
 
 class QuizView(UpdateView):
+    # http_method_names = ['post']
     template_name = 'quiz/quiz.html'
     context_object_name = 'quiz'
     form_class = AnswerForm
 
     def form_valid(self, form):
-        form.instance.current_question = self.kwargs['num'] + 1
-        form.check_correct_answer()
+        num_of_que = Quiz.objects.all().filter(slug=self.kwargs['slug'])[0].questions.all().count()
+        if (self.kwargs['num'] < num_of_que):
+            form.instance.current_question = self.kwargs['num'] + 1
+        else:
+            form.instance.current_question = 1
         return super().form_valid(form)
 
     def get_queryset(self):
@@ -25,7 +29,11 @@ class QuizView(UpdateView):
         return quiz
 
     def get_success_url(self):
-        return reverse('quiz:quiz', kwargs={'slug': self.kwargs['slug'], 'num': self.kwargs['num'] + 1})
+        num_of_que = Quiz.objects.all().filter(slug=self.kwargs['slug'])[0].questions.all().count()
+        if (self.kwargs['num'] < num_of_que):
+            return reverse('quiz:quiz', kwargs={'slug': self.kwargs['slug'], 'num': self.kwargs['num'] + 1})
+        else:
+            return reverse('quiz:result', kwargs={'slug': self.kwargs['slug']})
 
     def get_context_data(self, **kwargs):
         quiz = Quiz.objects.filter(published=True, slug=self.kwargs['slug']).all()[0]
@@ -34,3 +42,12 @@ class QuizView(UpdateView):
         context = super(QuizView, self).get_context_data(**kwargs)
         context['current_question'] = cur_que
         return context
+
+
+class ResultView(DetailView):
+    template_name = 'quiz/result.html'
+    context_object_name = 'result'
+
+    def get_queryset(self):
+        quiz = Quiz.objects.filter(published=True, slug=self.kwargs['slug']).all()
+        return quiz
