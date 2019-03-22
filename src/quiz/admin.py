@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Quiz  # Import Quiz module
-from .models import QuestionOrder  # Import Quiz module
+from .models import Quiz, QuestionOrder, Score
 
 
 class QuestionOrderInline(admin.TabularInline):
@@ -8,12 +7,18 @@ class QuestionOrderInline(admin.TabularInline):
     extra = 1
 
 
+class ScoreInline(admin.TabularInline):
+    model = Score
+    extra = 1
+    readonly_fields = ['score']
+
+
 # Register Quiz module on the admin interface
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
     # Display customised list on admin page
     list_display = ['name', 'published']
-    inlines = (QuestionOrderInline,)
+    inlines = (QuestionOrderInline, ScoreInline,)
 
     class Meta:
         model = Quiz
