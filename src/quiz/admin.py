@@ -10,7 +10,7 @@ class QuestionOrderInline(admin.TabularInline):
 class ScoreInline(admin.TabularInline):
     model = Score
     extra = 1
-    readonly_fields = ['score']
+    readonly_fields = ['user', 'score']
 
 
 # Register Quiz module on the admin interface
