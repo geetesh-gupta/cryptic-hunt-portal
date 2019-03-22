@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block main %}
+    <div class="container-fluid text-center py-5">
+        <div class="heading3 pb-3">Login Required</div>
+        <a role="button"
+                {% with next=request.GET.next %}
+           href="{% url 'social:begin' 'google-oauth2' %}{% if next %}?next={{ next }}{% endif %}"
+                {% endwith %}>
+            <button type="button" class="btn btn-rounded waves-effect button-fs"
+                    style="background-color: var(--btn-bg-color);">
+                Sign in with Google
+            </button>
+        </a>
+
+    </div>
+{% endblock %}
