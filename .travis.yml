@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 before_install:
-  - export DJANGO_SETTINGS_MODULE=online_quiz_portal.settings
+  - export DJANGO_SETTINGS_MODULE=cryptic-hunt-portal.settings
   - export SECRET_KEY='6vsu8!b#1c+9=kj3cjmofeasu4o7kb-lrb5x1351*@o!2g6!^9'
 install:
   - pip3 install pipenv
