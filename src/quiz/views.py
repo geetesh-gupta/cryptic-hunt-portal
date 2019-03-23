@@ -45,6 +45,19 @@ class QuizView(AccessMixin, UpdateView):
         self.user_quiz_details.save()
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        user_answer = form.data['answer']
+        self.user_quiz_details.save()
+        if UserQueAnsModel.objects.filter(user_quiz_details=self.user_quiz_details, question=self.cur_que).exists():
+            user_answers_model = \
+                UserQueAnsModel.objects.filter(user_quiz_details=self.user_quiz_details, question=self.cur_que)[0]
+            user_answers_model.answers += ', ' + user_answer
+        else:
+            user_answers_model = UserQueAnsModel(user_quiz_details=self.user_quiz_details, question=self.cur_que,
+                                                 answers=user_answer)
+        user_answers_model.save()
+        return super().form_invalid(form)
+
     def get_queryset(self):
         quiz = Quiz.objects.filter(published=True, slug=self.quiz_slug)
         return quiz
