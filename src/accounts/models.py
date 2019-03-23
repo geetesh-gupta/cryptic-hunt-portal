@@ -14,6 +14,7 @@ class UserProfile(models.Model):
         verbose_name = 'User Profiles'
         verbose_name_plural = 'User Profiles'
 
+
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
     if kwargs["created"]:

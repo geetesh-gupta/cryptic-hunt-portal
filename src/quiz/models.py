@@ -51,6 +51,7 @@ class UserQuizDetailsModel(models.Model):
         verbose_name = "User's Quiz Details"
         verbose_name_plural = "User's Quiz Details"
 
+
 class UserQueAnsModel(models.Model):
     user_quiz_details = models.ForeignKey(UserQuizDetailsModel, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
