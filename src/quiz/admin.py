@@ -10,11 +10,13 @@ class QuestionOrderInline(admin.TabularInline):
 class UserQuizDetailsInline(admin.TabularInline):
     model = UserQuizDetailsModel
     extra = 1
+    readonly_fields = ['user', 'quiz', 'score', 'cur_que_num', 'completed']
 
 
 class UserQueAnsInline(admin.TabularInline):
     model = UserQueAnsModel
     extra = 1
+    readonly_fields = ['user_quiz_details', 'question', 'answers']
 
 
 # Register Quiz module on the admin interface
@@ -41,6 +43,8 @@ class QuestionOrderAdmin(admin.ModelAdmin):
 
 @admin.register(UserQuizDetailsModel)
 class UserQuizDetailsAdmin(admin.ModelAdmin):
+    list_display = ['user', 'quiz', 'score', 'cur_que_num', 'completed']
+    readonly_fields = ['user', 'quiz', 'score', 'cur_que_num', 'completed']
     inlines = (UserQueAnsInline,)
 
     class Meta:
@@ -50,6 +54,9 @@ class UserQuizDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(UserQueAnsModel)
 class UserQueAnsAdmin(admin.ModelAdmin):
+    list_display = ['user_quiz_details', 'question', 'answers']
+    readonly_fields = ['user_quiz_details', 'question', 'answers']
+
     class Meta:
         model = UserQueAnsModel
         fields = '__all__'

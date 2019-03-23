@@ -9,5 +9,4 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     class Meta:
         model = UserProfile
-        # All fields of Answer
         fields = '__all__'
