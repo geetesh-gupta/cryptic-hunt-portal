@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'social_django',
     'question_answer',
     'quiz',
-    'main'
+    'main',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -110,7 +111,6 @@ LOGIN_REDIRECT_URL = 'main:index'
 LOGOUT_REDIRECT_URL = 'main:index'
 
 LOGIN_URL = '/login/'
-
 
 LOGIN_ERROR_URL = '/login/'
 
