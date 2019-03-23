@@ -256,3 +256,5 @@ VERSATILEIMAGEFIELD_SETTINGS = {
     # here: https://optimus.io/support/progressive-jpeg/
     'progressive_jpeg': False
 }
+
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
