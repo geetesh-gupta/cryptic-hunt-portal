@@ -1,5 +1,5 @@
 from django.views.generic import ListView, UpdateView, DetailView
-from quiz.models import Quiz, QuestionOrder, Score
+from quiz.models import Quiz, QuestionOrder, UserQuizDetailsModel, UserQueAnsModel
 from .forms import AnswerForm
 from django.urls import reverse
 from django.shortcuts import redirect, render
@@ -16,7 +16,7 @@ class AccessMixin(LoginRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class IndexView(ListView):
+class IndexView(AccessMixin, ListView):
     model = Quiz
     template_name = 'quiz/index.html'
     context_object_name = 'quizzes'
@@ -28,22 +28,21 @@ class QuizView(AccessMixin, UpdateView):
     form_class = AnswerForm
     quiz = None
     quiz_slug = None
-    num_of_que = None
+    cur_que = None
+    user_quiz_details = None
 
     def form_valid(self, form):
-        score = self.check_score(self.quiz)
+        score = self.user_quiz_details.score
         if score == 0:
-            score = Score(user=self.request.user, quiz=self.quiz, score=1)
-            score.save()
+            self.user_quiz_details.score = 1
         else:
-            score_model = Score.objects.filter(user=self.request.user, quiz=self.quiz)[0]
-            score_model.score = score + 1
-            score_model.save()
+            self.user_quiz_details.score += 1
 
-        if (self.kwargs['num'] < self.num_of_que):
-            form.instance.current_question = self.kwargs['num'] + 1
+        if (self.kwargs['num'] < self.quiz.questions.count()):
+            self.user_quiz_details.cur_que_num += 1
         else:
-            form.instance.current_question = 0
+            self.user_quiz_details.completed = True
+        self.user_quiz_details.save()
         return super().form_valid(form)
 
     def get_queryset(self):
@@ -51,34 +50,39 @@ class QuizView(AccessMixin, UpdateView):
         return quiz
 
     def get_success_url(self):
-        if (self.kwargs['num'] < self.num_of_que):
-            return reverse('quiz:quiz', kwargs={'slug': self.quiz_slug, 'num': self.kwargs['num'] + 1})
-        else:
+        if self.user_quiz_details.completed:
             return reverse('quiz:result', kwargs={'slug': self.quiz_slug})
+        else:
+            return reverse('quiz:quiz', kwargs={'slug': self.quiz_slug, 'num': self.kwargs['num'] + 1})
 
     def get_context_data(self, **kwargs):
-        cur_que_num = self.kwargs['num']
-        cur_que = QuestionOrder.objects.filter(quiz=self.quiz, order=cur_que_num)[0].question
         context = super(QuizView, self).get_context_data(**kwargs)
-        context['current_question'] = cur_que
+        context['current_question'] = self.cur_que
         return context
 
     def dispatch(self, request, *args, **kwargs):
+        self.user = self.request.user.user
         self.quiz_slug = self.kwargs['slug']
         self.quiz = Quiz.objects.filter(published=True, slug=self.quiz_slug)[0]
-        self.num_of_que = self.quiz.questions.count()
-        cur_que_num = self.quiz.current_question
-        if cur_que_num == 0:
-            return redirect(reverse('quiz:result', kwargs={'slug': kwargs['slug']}))
-        elif kwargs['num'] != cur_que_num:
-            return redirect(reverse('quiz:quiz', kwargs={'slug': kwargs['slug'], 'num': cur_que_num}))
+        if not self.quiz.userquizdetailsmodel_set.filter(user=self.user).exists():
+            self.user_quiz_details = UserQuizDetailsModel(user=self.user, quiz=self.quiz)
+        else:
+            self.user_quiz_details = self.quiz.userquizdetailsmodel_set.filter(user=self.user)[0]
+        self.cur_que_num = self.user_quiz_details.cur_que_num
+        self.cur_que = QuestionOrder.objects.filter(quiz=self.quiz, order=self.cur_que_num)[0].question
+        completed = self.user_quiz_details.completed
+
+        if completed:
+            return redirect(reverse('quiz:result', kwargs={'slug': self.quiz_slug}))
+        elif kwargs['num'] != self.cur_que_num:
+            return redirect(reverse('quiz:quiz', kwargs={'slug': self.quiz_slug, 'num': self.cur_que_num}))
         else:
             return super(QuizView, self).dispatch(request, *args, **kwargs)
 
-    def check_score(self, quiz):
-        if quiz.score_set.filter(user=self.request.user).exists():
-            return quiz.score_set.filter(user=self.request.user).all()[0].score
-        return 0
+    def get_form_kwargs(self):
+        kwargs = super(QuizView, self).get_form_kwargs()
+        kwargs.update({'cur_que_num': self.quiz.questions.count()})
+        return kwargs
 
 
 class ResultView(AccessMixin, DetailView):
@@ -92,7 +96,7 @@ class ResultView(AccessMixin, DetailView):
     def get_context_data(self, **kwargs):
         quiz = Quiz.objects.filter(published=True, slug=self.kwargs['slug'])[0]
         num_of_que = quiz.questions.count()
-        score = Score.objects.filter(user=self.request.user, quiz=quiz)[0].score
+        score = UserQuizDetailsModel.objects.filter(user=self.request.user.user, quiz=quiz)[0].score
         context = super(ResultView, self).get_context_data(**kwargs)
         context['quiz'] = quiz
         context['num_of_que'] = num_of_que

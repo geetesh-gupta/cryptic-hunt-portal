@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, QuestionOrder, Score
+from .models import Quiz, QuestionOrder, UserQuizDetailsModel, UserQueAnsModel
 
 
 class QuestionOrderInline(admin.TabularInline):
@@ -7,10 +7,14 @@ class QuestionOrderInline(admin.TabularInline):
     extra = 1
 
 
-class ScoreInline(admin.TabularInline):
-    model = Score
+class UserQuizDetailsInline(admin.TabularInline):
+    model = UserQuizDetailsModel
     extra = 1
-    readonly_fields = ['user', 'score']
+
+
+class UserQueAnsInline(admin.TabularInline):
+    model = UserQueAnsModel
+    extra = 1
 
 
 # Register Quiz module on the admin interface
@@ -18,7 +22,7 @@ class ScoreInline(admin.TabularInline):
 class QuizAdmin(admin.ModelAdmin):
     # Display customised list on admin page
     list_display = ['name', 'published']
-    inlines = (QuestionOrderInline, ScoreInline,)
+    inlines = (QuestionOrderInline, UserQuizDetailsInline)
 
     class Meta:
         model = Quiz
@@ -26,13 +30,26 @@ class QuizAdmin(admin.ModelAdmin):
         fields = '__all__'
 
 
-# Register Quiz module on the admin interface
 @admin.register(QuestionOrder)
 class QuestionOrderAdmin(admin.ModelAdmin):
-    # Display customised list on admin page
     list_display = ['quiz', 'question', 'order']
 
     class Meta:
         model = QuestionOrder
-        # All fields of Quiz
+        fields = '__all__'
+
+
+@admin.register(UserQuizDetailsModel)
+class UserQuizDetailsAdmin(admin.ModelAdmin):
+    inlines = (UserQueAnsInline,)
+
+    class Meta:
+        model = UserQuizDetailsModel
+        fields = '__all__'
+
+
+@admin.register(UserQueAnsModel)
+class UserQueAnsAdmin(admin.ModelAdmin):
+    class Meta:
+        model = UserQueAnsModel
         fields = '__all__'

@@ -17,10 +17,11 @@ class AnswerForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        quiz = kwargs.pop('instance')
+        cur_que_num = kwargs.pop('cur_que_num')
         super(AnswerForm, self).__init__(*args, **kwargs)  # populates the post
-        instance = kwargs.pop('instance')
-        questionorder_set = instance.questionorder_set
-        question = questionorder_set.filter(quiz=instance, order=instance.current_question)[0].question
+        questionorder_set = quiz.questionorder_set
+        question = questionorder_set.filter(quiz=quiz, order=cur_que_num)[0].question
         question_slug = question.slug
         self.initial['question_slug'] = question_slug
 

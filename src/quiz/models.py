@@ -2,17 +2,18 @@ from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils.text import slugify
 from question_answer.models import Question
-from django.contrib.auth.models import User
+from accounts.models import UserProfile
+from django.utils.timezone import now
 
 
 class Quiz(models.Model):
     name = models.CharField(max_length=128)
     slug = models.SlugField()
     about = RichTextUploadingField(null=True, blank=True, default='')
-    date_published = models.DateTimeField()
+    date_published = models.DateTimeField(default=now)
     questions = models.ManyToManyField(Question, related_name='quiz', through='QuestionOrder')
+    user = models.ManyToManyField(UserProfile, related_name='quiz', through='UserQuizDetailsModel')
     published = models.BooleanField(default=False)
-    current_question = models.IntegerField(default=1)
 
     def __str__(self):
         return self.name
@@ -32,7 +33,15 @@ class QuestionOrder(models.Model):
     order = models.IntegerField(default=1)
 
 
-class Score(models.Model):
-    user = models.ForeignKey(User, limit_choices_to={'is_staff': False}, on_delete=models.CASCADE)
+class UserQuizDetailsModel(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
+    cur_que_num = models.IntegerField(default=1)
+    completed = models.BooleanField(default=False)
+
+
+class UserQueAnsModel(models.Model):
+    user_quiz_details = models.ForeignKey(UserQuizDetailsModel, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answers = models.TextField()
